@@ -8,6 +8,7 @@ public class Medkit : MonoBehaviour {
 	GameObject player;
 	bool playerTouching;
 	public int HealAmount = 20;
+	bool Random;
 
 
 	void Awake ()
@@ -35,7 +36,7 @@ public class Medkit : MonoBehaviour {
 	{
 		if (playerHealth.currentHealth < 120) 
 		{
-			playerHealth.Heal (HealAmount);
+			playerHealth.Healing (HealAmount);
 		}
 	}
 }
