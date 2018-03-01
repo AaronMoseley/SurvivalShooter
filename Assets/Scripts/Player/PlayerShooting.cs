@@ -1,10 +1,14 @@
 ﻿using UnityEngine;
+using System.Collections;
 
 public class PlayerShooting : MonoBehaviour
 {
     public int damagePerShot = 20;
     public float timeBetweenBullets = 0.15f;
     public float range = 100f;
+	public float reloadTime = 1.5f;
+	public int gunAmmo = 30;
+	public int ammo = 30;
 
 
     float timer;
@@ -16,7 +20,8 @@ public class PlayerShooting : MonoBehaviour
     AudioSource gunAudio;
     Light gunLight;
     float effectsDisplayTime = 0.2f;
-
+	float reloadTimer = 0f;
+	bool reloading;
 
     void Awake ()
     {
@@ -27,23 +32,37 @@ public class PlayerShooting : MonoBehaviour
         gunLight = GetComponent<Light> ();
     }
 
+	public void Upgrading (int amount)
+	{
+		damagePerShot += amount;
+	}
 
-    void Update ()
-    {
-        timer += Time.deltaTime;
+	void Update ()
+	{
+		timer += Time.deltaTime;
+		AmmoManager.ammo = gunAmmo;
 
-		if(Input.GetButton ("Fire1") && timer >= timeBetweenBullets && Time.timeScale != 0)
-        {
-            Shoot ();
-        }
+		if (Input.GetButton ("Fire1") && timer >= timeBetweenBullets && Time.timeScale != 0 && reloading == false && gunAmmo > 0) {
+			Shoot ();
+		}
 
-        if(timer >= timeBetweenBullets * effectsDisplayTime)
-        {
-            DisableEffects ();
-        }
-    }
+		if (timer >= timeBetweenBullets * effectsDisplayTime) {
+			DisableEffects ();
+		}
 
+		if (Input.GetKeyDown (KeyCode.R)) 
+		{
+			reloading = true;
+			StartCoroutine (Reload());
+		}
 
+		if (gunAmmo == 0) {
+			reloadTime = 3f;
+			reloading = true;
+			StartCoroutine (Reload());
+		}
+	}
+		
     public void DisableEffects ()
     {
         gunLine.enabled = false;
@@ -53,33 +72,43 @@ public class PlayerShooting : MonoBehaviour
 
     void Shoot ()
     {
-        timer = 0f;
+			gunAmmo -= 1;	
 
-        gunAudio.Play ();
+			timer = 0f;
 
-        gunLight.enabled = true;
+			gunAudio.Play ();
 
-        gunParticles.Stop ();
-        gunParticles.Play ();
+			gunLight.enabled = true;
 
-        gunLine.enabled = true;
-        gunLine.SetPosition (0, transform.position);
+			gunParticles.Stop ();
+			gunParticles.Play ();
 
-        shootRay.origin = transform.position;
-        shootRay.direction = transform.forward;
+			gunLine.enabled = true;
+			gunLine.SetPosition (0, transform.position);
 
-        if(Physics.Raycast (shootRay, out shootHit, range, shootableMask))
-        {
-            EnemyHealth enemyHealth = shootHit.collider.GetComponent <EnemyHealth> ();
-            if(enemyHealth != null)
-            {
-                enemyHealth.TakeDamage (damagePerShot, shootHit.point);
-            }
-            gunLine.SetPosition (1, shootHit.point);
-        }
-        else
-        {
-            gunLine.SetPosition (1, shootRay.origin + shootRay.direction * range);
-        }
+			shootRay.origin = transform.position;
+			shootRay.direction = transform.forward;
+
+			if (Physics.Raycast (shootRay, out shootHit, range, shootableMask)) {
+				EnemyHealth enemyHealth = shootHit.collider.GetComponent <EnemyHealth> ();
+				if (enemyHealth != null) {
+					enemyHealth.TakeDamage (damagePerShot, shootHit.point);
+				}
+				gunLine.SetPosition (1, shootHit.point);
+			} else {
+				gunLine.SetPosition (1, shootRay.origin + shootRay.direction * range);
+			}
     }
+
+	IEnumerator Reload () {
+
+		if (reloading == false) 
+		{
+			yield return new WaitForSeconds (reloadTime);
+			gunAmmo = ammo;
+			reloadTime = 1f;
+			print ("DONE");
+			reloading = false;
+		}
+	}
 }

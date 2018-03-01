@@ -21,7 +21,6 @@ public class PlayerHealth : MonoBehaviour
 	PlayerShooting playerShooting;
 	bool isDead;
 	bool damaged;
-	bool healed;
 
 
 	void Awake ()
@@ -45,6 +44,11 @@ public class PlayerHealth : MonoBehaviour
 			damageImage.color = Color.Lerp (damageImage.color, Color.clear, flashSpeed * Time.deltaTime);
 		}
 		damaged = false;
+
+		if (currentHealth > 100) 
+		{
+			currentHealth = 100;
+		}
 	}
 
 
@@ -66,8 +70,6 @@ public class PlayerHealth : MonoBehaviour
 
 	public void Healing (int amount)
 	{
-		healed = true;
-
 		currentHealth += amount;
 
 		healthSlider.value = currentHealth;

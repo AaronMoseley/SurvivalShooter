@@ -3,7 +3,7 @@
 public class GameOverManager : MonoBehaviour
 {
 	public PlayerHealth playerHealth;       // Reference to the player's health.
-	public float restartDelay = 5f;         // Time to wait before restarting the level
+	public float restartDelay = 10f;         // Time to wait before restarting the level
 
 
 	Animator anim;                          // Reference to the animator component.

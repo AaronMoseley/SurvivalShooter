@@ -4,39 +4,40 @@ using UnityEngine;
 
 public class Medkit : MonoBehaviour {
 
+	public int HealAmount = 20;
+
 	PlayerHealth playerHealth;
 	GameObject player;
-	bool playerTouching;
-	public int HealAmount = 20;
-	bool Random;
+	GameObject medkit;
 
 
 	void Awake ()
 	{
-		Medkit = GameObject.FindGameObjectWithTag ("medkit");
+		player = GameObject.FindGameObjectWithTag ("Player");
+		medkit = GameObject.FindGameObjectWithTag ("Medkit");
 		playerHealth = player.GetComponent <PlayerHealth> ();
 	}
-	
+		
 	void OnTriggerEnter (Collider other)
 	{
-		if (other.gameObject == player)
-		{
-			playerTouching = true;
-		}
-	}
-
-	void Update () {
-		if (playerTouching && playerHealth.currentHealth < 120) 
+		if (other.gameObject == player) 
 		{
 			Heal ();
+			Debug.Log ("jssdfdskfj");
+		}
+
+		if (other.gameObject == medkit) 
+		{
+			Destroy (gameObject);
 		}
 	}
 
 	void Heal ()
 	{
-		if (playerHealth.currentHealth < 120) 
+		if (playerHealth.currentHealth < 100) 
 		{
 			playerHealth.Healing (HealAmount);
+			Destroy (gameObject);
 		}
 	}
 }
