@@ -21,6 +21,7 @@ public class PlayerHealth : MonoBehaviour
 	PlayerShooting playerShooting;
 	bool isDead;
 	bool damaged;
+	GameObject water;
 
 
 	void Awake ()
@@ -30,6 +31,7 @@ public class PlayerHealth : MonoBehaviour
 		playerMovement = GetComponent <PlayerMovement> ();
 		playerShooting = GetComponentInChildren <PlayerShooting> ();
 		currentHealth = startingHealth;
+		water = GameObject.FindGameObjectWithTag ("Water");
 	}
 
 
@@ -48,6 +50,16 @@ public class PlayerHealth : MonoBehaviour
 		if (currentHealth > 100) 
 		{
 			currentHealth = 100;
+		}
+	}
+
+	void OnTriggerEnter(Collider other)
+	{
+		if (other.gameObject == water) 
+		{
+			gameObject.GetComponent<Collider>().enabled = false;
+			currentHealth = 0;
+			Death ();
 		}
 	}
 

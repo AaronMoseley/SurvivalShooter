@@ -23,18 +23,11 @@ public class GunUpgrade : MonoBehaviour {
 	{
 		if (other.gameObject == player) 
 		{
-			Upgrade ();
-		}
-
-		if (other.gameObject == GunUpgrader) 
+			Destroy (gameObject);
+			playerShooting.Upgrading ();
+		} else if (other.gameObject == GunUpgrader) 
 		{
 			Destroy (gameObject);
 		}
-	}
-
-	void Upgrade ()
-	{
-		playerShooting.Upgrading (upgradeAmount);
-		Destroy (gameObject);
 	}
 }

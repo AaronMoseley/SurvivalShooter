@@ -14,6 +14,7 @@ public class GameOverManager : MonoBehaviour
 	{
 		// Set up the reference.
 		anim = GetComponent <Animator> ();
+		restartTimer = 0f;
 	}
 
 

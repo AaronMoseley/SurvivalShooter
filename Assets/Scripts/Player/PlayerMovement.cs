@@ -3,6 +3,8 @@
 public class PlayerMovement : MonoBehaviour
 {
 	public float speed = 6f;
+	public float sprintSpeed = 12f;
+	public Vector3 playerToMouse;
 
 	Vector3 movement;                   
 	Animator anim;                      
@@ -10,11 +12,18 @@ public class PlayerMovement : MonoBehaviour
 	int floorMask;                      
 	float camRayLength = 100f;     
 	bool sprint;
+	PlayerShooting shooting;
+	bool holdingF;
+	public bool pickupSub;
+	public bool pickupRifle;
+	public bool pickupShotgun;
+	public bool pickupSniper;
+
 
 	void Awake ()
 	{
 		floorMask = LayerMask.GetMask ("Floor");
-
+		shooting = GetComponentInChildren <PlayerShooting> ();
 		anim = GetComponent <Animator> ();
 		playerRigidbody = GetComponent <Rigidbody> ();
 	}
@@ -33,13 +42,15 @@ public class PlayerMovement : MonoBehaviour
 
 		if (Input.GetKeyDown (KeyCode.LeftShift)) 
 		{
-			speed = 9;
+			speed = sprintSpeed;
 		}
 
 		if (Input.GetKeyUp (KeyCode.LeftShift)) 
 		{
-			speed = 6;
+			speed = 6f;
 		}
+
+		holdingF = Input.GetKey(KeyCode.F);
 	}
 
 	void Move (float h, float v)
@@ -61,7 +72,7 @@ public class PlayerMovement : MonoBehaviour
 		{
 			Vector3 playerToMouse = floorHit.point - transform.position;
 
-			playerToMouse.y = 0f;
+			//playerToMouse.y = 0f;
 
 			Quaternion newRotation = Quaternion.LookRotation (playerToMouse);
 
@@ -74,5 +85,96 @@ public class PlayerMovement : MonoBehaviour
 		bool walking = h != 0f || v != 0f;
 
 		anim.SetBool ("IsWalking", walking);
+	}
+
+	void OnTriggerStay (Collider other)
+	{
+		if (other.gameObject == shooting.subGun && holdingF) 
+		{
+			shooting.sub = true;
+			shooting.rifle = false;
+			shooting.sniper = false;
+			shooting.shotgun = false;
+			pickupSub = false;
+			pickupSniper = false;
+			pickupShotgun = false;
+			pickupRifle = false;
+		}
+
+		else if (other.gameObject == shooting.rifleGun && holdingF) 
+		{
+			shooting.rifle = true;
+			shooting.sniper = false;
+			shooting.sub = false;
+			shooting.shotgun = false;
+			pickupSub = false;
+			pickupSniper = false;
+			pickupShotgun = false;
+			pickupRifle = false;
+		}
+
+		else if (other.gameObject == shooting.sniperGun && holdingF)  
+		{
+			shooting.sniper = true;
+			shooting.rifle = false;
+			shooting.shotgun = false;
+			shooting.sub = false;
+			pickupSub = false;
+			pickupSniper = false;
+			pickupShotgun = false;
+			pickupRifle = false;
+		}
+
+		else if (other.gameObject == shooting.shotgunGun && holdingF) 
+		{
+			shooting.shotgun = true;
+			shooting.rifle = false;
+			shooting.sub = false;
+			shooting.sniper = false;
+			pickupSub = false;
+			pickupSniper = false;
+			pickupShotgun = false;
+			pickupRifle = false;
+		}
+	}
+
+	void OnTriggerEnter (Collider other)
+	{
+		if (other.gameObject == shooting.subGun) 
+		{
+			pickupSub = true;
+		} 
+		else if (other.gameObject == shooting.rifleGun) 
+		{
+			pickupRifle = true;
+		} 
+		else if (other.gameObject == shooting.sniperGun) 
+		{
+			pickupSniper = true;
+		} 
+		else if (other.gameObject == shooting.shotgunGun) 
+		{
+			pickupShotgun = true;
+		}
+	}
+
+	void OnTriggerExit (Collider other)
+	{
+		if (other.gameObject == shooting.subGun) 
+		{
+			pickupSub = false;
+		} 
+		else if (other.gameObject == shooting.rifleGun) 
+		{
+			pickupRifle = false;
+		} 
+		else if (other.gameObject == shooting.sniperGun) 
+		{
+			pickupSniper = false;
+		} 
+		else if (other.gameObject == shooting.shotgunGun) 
+		{
+			pickupShotgun = false;
+		}
 	}
 }

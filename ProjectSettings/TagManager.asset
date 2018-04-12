@@ -8,6 +8,26 @@ TagManager:
   - GunBarrelEnd
   - Gun Upgrade
   - Floor
+  - Water
+  - rifle
+  - sub
+  - shotgun
+  - sniper
+  - Rifle Bullet
+  - Shotgun Bullet
+  - Sub Bullet
+  - Sniper Bullet
+  - End7
+  - End8
+  - End4
+  - End1
+  - End5
+  - End6
+  - End3
+  - End2
+  - Enemy
+  - Wall
+  - Foundation1
   layers:
   - Default
   - TransparentFX
